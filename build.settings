@@ -6,8 +6,8 @@
 settings =
 {
 	orientation = {
-		default = "portrait",
-		supported = { "portrait", "portraitUpsideDown" }
+		default = "landscapeLeft",
+		supported = { "landscapeLeft", "landscapeRight" }
 	},
 
 	iphone =
@@ -37,6 +37,33 @@ settings =
 		},
 	},
 
+	tvos =
+	{
+		icon =
+		{
+			small =
+			{
+				"Icon-tvOS-Small-LogoA.png",
+				"Icon-tvOS-Small-LogoB.png",
+				"Icon-tvOS-Small-Background.png"
+			},
+			large =
+			{
+				"Icon-tvOS-Large-LogoA.png",
+				"Icon-tvOS-Large-LogoB.png",
+				"Icon-tvOS-Large-Background.png"
+			}
+		},
+		topShelfImage = "Icon-tvOS-TopShelf.png",
+		launchImage = "Icon-tvOS-Launch.png"
+	},
+
+	excludeFiles =
+	{
+		iphone = { "Icon-tvOS*.png" },
+		android = { "Icon-tvOS*.png" }
+	},
+
 	window =
 	{
 		titleText =
@@ -50,7 +77,7 @@ settings =
 		["plugin.applovin"] =
         {
             publisherId = "com.coronalabs",
-            supportedPlatforms = { iphone=true, android=true, osx=true, win32=true }
+            supportedPlatforms = { iphone=true, android=true, appletvos=true }
         },
         ["plugin.google.play.services"] =
         {

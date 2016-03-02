@@ -24,8 +24,8 @@ display.getCurrentStage():insert( sampleUI.frontGroup )
 ----------------------
 
 -- Require libraries/plugins
-local widget = require( "widget" )
 local applovin = require( "plugin.applovin" )
+local widget = require( "widget" )
 
 -- Set app font
 local appFont = sampleUI.appFont
@@ -53,9 +53,29 @@ local assets = graphics.newImageSheet( "assets.png",
 )
 
 -- Create object to visually prompt action
-local prompt = display.newPolygon( mainGroup, 62, 210, { 0,-12, 12,0, 0,12 } )
+local prompt = display.newPolygon( mainGroup, 142, 170, { 0,-12, 12,0, 0,12 } )
 prompt:setFillColor( 0.8 )
 prompt.alpha = 0
+
+-- Create spinner widget for indicating ad status
+if ( system.getInfo( "platformName" ) ~= "tvOS" ) then widget.setTheme( "widget_theme_android_holo_light" ) end
+local spinner = widget.newSpinner( { x=display.contentCenterX, y=275, deltaAngle=10, incrementEvery=10 } )
+mainGroup:insert( spinner )
+spinner.alpha = 0
+
+
+-- Function to manage spinner appearance/animation
+local function manageSpinner( action )
+	if ( action == "show" ) then
+		spinner:start()
+		transition.cancel( "spinner" )
+		transition.to( spinner, { alpha=1, tag="spinner", time=((1-spinner.alpha)*320), transition=easing.outQuad } )
+	elseif ( action == "hide" ) then
+		transition.cancel( "spinner" )
+		transition.to( spinner, { alpha=0, tag="spinner", time=((1-(1-spinner.alpha))*320), transition=easing.outQuad,
+			onComplete=function() spinner:stop(); end } )
+	end
+end
 
 
 -- Function to prompt/alert user for setup
@@ -111,7 +131,7 @@ local function adListener( event )
 
 	-- Exit function if user hasn't set up testing parameters
 	if ( setupComplete == false ) then return end
-	
+
 	-- Successful initialization of the AppLovin plugin
 	if ( event.phase == "init" ) then
 		print( "AppLovin event: initialization successful" )
@@ -121,6 +141,7 @@ local function adListener( event )
 	elseif ( event.phase == "loaded" ) then
 		print( "AppLovin event: " .. tostring(event.type) .. " ad loaded successfully" )
 		updateUI( { enable={ showButton }, disable={ loadButton }, promptTo=showButton } )
+		manageSpinner( "hide" )
 
 	-- The ad was displayed/played
 	elseif ( event.phase == "displayed" or event.phase == "playbackBegan" ) then
@@ -139,6 +160,7 @@ local function adListener( event )
 	-- The ad failed to load
 	elseif ( event.phase == "failed" ) then
 		print( "AppLovin event: " .. tostring(event.type) .. " ad failed to load" )
+		manageSpinner( "hide" )
 
 	-- The user declined to view a rewarded/incentivized video ad
 	elseif ( event.phase == "declinedToView" ) then
@@ -163,6 +185,7 @@ local function uiEvent( event )
 
 	if ( event.target.id == "load" ) then
 		applovin.load( useIncentivizedRewarded )
+		manageSpinner( "show" )
 	elseif ( event.target.id == "show" ) then
 		applovin.show( useIncentivizedRewarded )
 	elseif ( event.target.id == "useIncentivizedRewarded" ) then
@@ -180,8 +203,8 @@ local function uiEvent( event )
 	return true
 end
 
-
 -- Create rewarded/incentivized switch/label
+local irLabel = display.newText( mainGroup, "use incentivized/rewarded", display.contentCenterX+16, 105, appFont, 16 )
 local irSwitch = widget.newSwitch(
 	{
 		sheet = assets,
@@ -189,16 +212,14 @@ local irSwitch = widget.newSwitch(
 		height = 35,
 		frameOn = 1,
 		frameOff = 2,
-		x = 63,
-		y = 125,
+		x = irLabel.contentBounds.xMin-22,
+		y = irLabel.y,
 		style = "checkbox",
 		id = "useIncentivizedRewarded",
 		initialSwitchState = false,
 		onPress = uiEvent
 	})
 mainGroup:insert( irSwitch )
-local irLabel = display.newText( mainGroup, "use incentivized/rewarded", irSwitch.x+22, irSwitch.y, appFont, 16 )
-irLabel.anchorX = 0
 
 -- Create buttons
 loadButton = widget.newButton(
@@ -207,7 +228,7 @@ loadButton = widget.newButton(
 		id = "load",
 		shape = "rectangle",
 		x = display.contentCenterX + 10,
-		y = 210,
+		y = 170,
 		width = 188,
 		height = 32,
 		font = appFont,
@@ -226,7 +247,7 @@ showButton = widget.newButton(
 		id = "show",
 		shape = "rectangle",
 		x = display.contentCenterX + 10,
-		y = 260,
+		y = 220,
 		width = 188,
 		height = 32,
 		font = appFont,
