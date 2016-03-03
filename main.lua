@@ -204,7 +204,7 @@ local function uiEvent( event )
 end
 
 -- Create rewarded/incentivized switch/label
-local irLabel = display.newText( mainGroup, "use incentivized/rewarded", display.contentCenterX+16, 105, appFont, 16 )
+local irLabel = display.newText( mainGroup, "Use Incentivized/Rewarded", display.contentCenterX+16, 105, appFont, 16 )
 local irSwitch = widget.newSwitch(
 	{
 		sheet = assets,
@@ -224,7 +224,7 @@ mainGroup:insert( irSwitch )
 -- Create buttons
 loadButton = widget.newButton(
 	{
-		label = "load AppLovin ad",
+		label = "Load AppLovin Ad",
 		id = "load",
 		shape = "rectangle",
 		x = display.contentCenterX + 10,
@@ -243,7 +243,7 @@ mainGroup:insert( loadButton )
 
 showButton = widget.newButton(
 	{
-		label = "show AppLovin ad",
+		label = "Show AppLovin Ad",
 		id = "show",
 		shape = "rectangle",
 		x = display.contentCenterX + 10,
