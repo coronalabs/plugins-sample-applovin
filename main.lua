@@ -233,8 +233,8 @@ loadButton = widget.newButton(
 		height = 32,
 		font = appFont,
 		fontSize = 16,
-		fillColor = { default={ 0.16,0.36,0.56,1 }, over={ 0.16,0.36,0.56,1 } },
-		labelColor = { default={ 1,1,1,1 }, over={ 1,1,1,0.8 } },
+		fillColor = { default={ 0.12,0.32,0.52,1 }, over={ 0.132,0.352,0.572,1 } },
+		labelColor = { default={ 1,1,1,1 }, over={ 1,1,1,1 } },
 		onRelease = uiEvent
 	})
 loadButton:setEnabled( false )
@@ -252,8 +252,8 @@ showButton = widget.newButton(
 		height = 32,
 		font = appFont,
 		fontSize = 16,
-		fillColor = { default={ 0.16,0.36,0.56,1 }, over={ 0.16,0.36,0.56,1 } },
-		labelColor = { default={ 1,1,1,1 }, over={ 1,1,1,0.8 } },
+		fillColor = { default={ 0.12,0.32,0.52,1 }, over={ 0.132,0.352,0.572,1 } },
+		labelColor = { default={ 1,1,1,1 }, over={ 1,1,1,1 } },
 		onRelease = uiEvent
 	})
 showButton:setEnabled( false )
