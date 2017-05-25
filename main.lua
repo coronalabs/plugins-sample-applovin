@@ -1,6 +1,6 @@
 
 -- Abstract: AppLovin
--- Version: 1.0
+-- Version: 1.1
 -- Sample code is MIT licensed; see https://www.coronalabs.com/links/code/license
 ---------------------------------------------------------------------------------------
 
@@ -36,8 +36,8 @@ local sdkKey = "[YOUR-SDK-KEY]"
 
 -- Set local variables
 local setupComplete = false
-local useIncentivizedRewarded = false
-local alertIncentivizedRewarded = true
+local useRewarded = false
+local alertRewarded = true
 local loadButton
 local showButton
 
@@ -58,7 +58,6 @@ prompt:setFillColor( 0.8 )
 prompt.alpha = 0
 
 -- Create spinner widget for indicating ad status
-if ( system.getInfo( "platformName" ) ~= "tvOS" ) then widget.setTheme( "widget_theme_android_holo_light" ) end
 local spinner = widget.newSpinner( { x=display.contentCenterX, y=275, deltaAngle=10, incrementEvery=10 } )
 mainGroup:insert( spinner )
 spinner.alpha = 0
@@ -184,20 +183,28 @@ end
 local function uiEvent( event )
 
 	if ( event.target.id == "load" ) then
-		applovin.load( useIncentivizedRewarded )
+		if ( useRewarded == true ) then
+			applovin.load( "rewardedVideo" )
+		else
+			applovin.load( "interstitial" )
+		end
 		manageSpinner( "show" )
 	elseif ( event.target.id == "show" ) then
-		applovin.show( useIncentivizedRewarded )
-	elseif ( event.target.id == "useIncentivizedRewarded" ) then
+		if ( useRewarded == true and applovin.isLoaded( "rewardedVideo" ) ) then
+			applovin.show( "rewardedVideo" )
+		elseif ( useRewarded == false and applovin.isLoaded( "interstitial" ) ) then
+			applovin.show( "interstitial" )
+		end
+	elseif ( event.target.id == "useRewarded" ) then
 		if ( event.target.isOn == true ) then
-			useIncentivizedRewarded = true
+			useRewarded = true
 			-- Initially alert for incentivized/rewarded setup
-			if ( alertIncentivizedRewarded == true ) then
-				alertIncentivizedRewarded = false
+			if ( alertRewarded == true ) then
+				alertRewarded = false
 				local alert = native.showAlert( "Note", 'To receive incentivized/rewarded video ads in your app, ensure that you have enabled the feature in the AppLovin developer portal. Also note that activation of this feature does not take effect instantaneously, so it may require some time before these ads can be served.', { "OK" } )
 			end
 		else
-			useIncentivizedRewarded = false
+			useRewarded = false
 		end
 	end
 	return true
@@ -215,7 +222,7 @@ local irSwitch = widget.newSwitch(
 		x = irLabel.contentBounds.xMin-22,
 		y = irLabel.y,
 		style = "checkbox",
-		id = "useIncentivizedRewarded",
+		id = "useRewarded",
 		initialSwitchState = false,
 		onPress = uiEvent
 	})
@@ -265,4 +272,4 @@ mainGroup:insert( showButton )
 checkSetup()
 
 -- Init the Applovin plugin
-applovin.init( adListener, { sdkKey=sdkKey, verboseLogging=false } )
+applovin.init( adListener, { sdkKey=sdkKey, verboseLogging=false, testMode=true } )
